@@ -137,14 +137,20 @@ export const checks = {
     const app = readText(root, 'octofit-tracker/frontend/src/App.jsx');
     requirePatterns(
       frontend,
-      [/import\.meta\.env/, /VITE_CODESPACE_NAME/, /localhost:8000/, /react-router-dom/i],
+      [
+        /import\.meta\.env/,
+        /VITE_CODESPACE_NAME/,
+        /localhost:8000/,
+        /react-router-dom/i,
+        /\b(?:fetch|axios)\b/i,
+      ],
       'React presentation tier',
     );
     for (const resource of resources) {
       const { file, text } = resourceComponent(root, resource);
       assertValid(
-        new RegExp(`/api/${resource}/?`, 'i').test(text) && /\b(?:fetch|axios)\b/i.test(text),
-        `${file} must request /api/${resource}/`,
+        new RegExp(`/api/${resource}/?`, 'i').test(text),
+        `${file} must request /api/${resource}/ (directly or through a shared API helper)`,
       );
       const componentName = path.basename(file, path.extname(file));
       assertValid(

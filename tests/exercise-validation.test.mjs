@@ -241,6 +241,39 @@ test('resource views must request their own API and be routed', () => {
   assert.throws(() => checks['step5-api-config'](root), /Teams\.jsx must request \/api\/teams\//);
 });
 
+test('resource views can delegate API requests to a shared component', () => {
+  const root = createCompletedLearnerApp();
+  for (const resource of ['Activities', 'Leaderboard', 'Teams', 'Users', 'Workouts']) {
+    const endpoint = resource.toLowerCase();
+    write(
+      root,
+      `octofit-tracker/frontend/src/components/${resource}.jsx`,
+      `import ResourceList from './ResourceList.jsx';
+       export default function ${resource}() {
+         return <ResourceList endpoint="/api/${endpoint}/" />;
+       }`,
+    );
+  }
+  write(
+    root,
+    'octofit-tracker/frontend/src/components/ResourceList.jsx',
+    `export default function ResourceList({ endpoint }) {
+       return fetchRecords(endpoint);
+     }`,
+  );
+  write(
+    root,
+    'octofit-tracker/frontend/src/api.js',
+    `const apiBase = import.meta.env.VITE_CODESPACE_NAME
+       ? \`https://\${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev\`
+       : 'http://localhost:8000';
+     export function fetchRecords(endpoint) {
+       return fetch(apiBase + endpoint);
+     }`,
+  );
+  assert.doesNotThrow(() => checks['step5-api-config'](root));
+});
+
 test('any workflow-level write permission is rejected', () => {
   const root = copyExerciseMetadata();
   const workflow = path.join(root, '.github/workflows/2-application-initial-setup.yml');
