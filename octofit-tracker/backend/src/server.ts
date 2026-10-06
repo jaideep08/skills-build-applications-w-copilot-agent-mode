@@ -76,3 +76,4 @@ export async function startServer() {
     console.log(`OctoFit API listening at ${baseUrl}`);
   });
 }
+
