@@ -2,17 +2,18 @@
 
 ## API configuration
 
-In GitHub Codespaces, define `VITE_CODESPACE_NAME` in the frontend environment
-before starting Vite so the presentation tier can reach the API on port 8000.
-For local development, create `octofit-tracker/frontend/.env.local` with:
+In GitHub Codespaces, the frontend derives the API host from the forwarded
+frontend hostname and targets port 8000. If you use a different hostname,
+define `VITE_CODESPACE_NAME` in the frontend environment before starting Vite.
+For local development, you can create `octofit-tracker/frontend/.env.local` with:
 
 ```dotenv
 VITE_CODESPACE_NAME=your-codespace-name
 ```
 
-Restart the Vite development server after changing environment variables.
-When `VITE_CODESPACE_NAME` is unset, the frontend safely defaults to
-`http://localhost:8000`.
+Restart the Vite development server after changing environment variables. When
+running locally and `VITE_CODESPACE_NAME` is unset, the frontend safely defaults
+to `http://localhost:8000`.
 
 ## Development
 
